@@ -18,8 +18,10 @@ function wsEvent() {
 
             // 1. 소켓 연결 시 sessionId 세팅
             if (data.type === "getId") {
-                var sessionId = data.sessionId !== null ? d.sessionId : "";
+                var sessionId = data.sessionId !== null ? data.sessionId : "";
                 if (sessionId !== null) {
+                    document.querySelector("#sessionId").value = sessionId;
+
                     var obj = {
                         type: "open",
                         sessionId: document.querySelector("#sessionId").value,
@@ -35,7 +37,7 @@ function wsEvent() {
             else if (data.type === "message") {
                 var chatBox = document.querySelector("#chatting");
 
-                if (data.sessionId === document.querySelector("#sessionId")) {
+                if (data.sessionId === document.querySelector("#sessionId").value) {
                     chatBox.insertAdjacentHTML("beforeend", `<p class=me>${data.msg}</p>`);
                 } else {
                     chatBox.insertAdjacentHTML("beforeend", `<p class=others>${data.userName}: ${data.msg}</p>`);
@@ -46,7 +48,7 @@ function wsEvent() {
             else if (data.type === "open") {
                 var chatBox = document.querySelector("#chatting");
 
-                if (data.sessionId === document.querySelector("#sessionId")) {
+                if (data.sessionId === document.querySelector("#sessionId").value) {
                     chatBox.insertAdjacentHTML("beforeend", `<p class=start>[채팅에 참가하였습니다.]</p>`);
                 } else {
                     chatBox.insertAdjacentHTML("beforeend", `<p class=start>[${data.userName}님이 입장하였습니다.]</p>`);
@@ -86,7 +88,7 @@ function chatName() {
 }
 
 function send() {
-    var obj ={
+    var obj = {
         type: "message",
         sessionId: document.querySelector("#sessionId").value,
         userName: document.querySelector("#userName").value,
@@ -95,5 +97,5 @@ function send() {
 
     //서버에 데이터 전송
     ws.send(JSON.stringify(obj))
-    document.querySelector("#chat").innerText = "";
+    document.querySelector("#chat").value = "";
 }
